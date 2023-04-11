@@ -26,7 +26,7 @@ MySQL的Driver驱动包下载到MySQL官网[MySQL :: MySQL Community Downloads](
 
 解压后将其中的jar包添加到开发环境即可
 
-如未使用集成工具开发JDBC则要在环境变量中，将jar加到`classpath`变量里，例windows
+如未使用集成工具开发JDBC则要在环境变量中，将jar加到`classpath`变量里，例windows。其中，`.;`是代表当前的路径，classpath变量会让所有的class文件都执行这个变量值的内容，但不是所有的class文件都在mysql jdbc的路径下，所以，要加上`.;`让其他类文件可以正常被识别运行。
 
 ![image-20230410154724265](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101547311.png)
 
@@ -187,5 +187,3 @@ JDBC可以通过获取`properties`配置文件中的`driver`值从而加载不�
           }
       }
       ```
-
-      
