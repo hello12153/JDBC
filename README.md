@@ -16,7 +16,7 @@ JDBC允许Java程序连接各种类型的数据库，并且可以用Java语言�
 
 在MySQL 5.0之前driver驱动的全限定类名为`com.mysql.jdbc.Driver`，而到 8.0 改为`com.mysql.cj.jdbc.Driver`
 
-MySQL的Driver驱动包下载到MySQL官网[MySQL :: MySQL Community Downloads](https://dev.mysql.com/downloads/) - [Connector/J](https://dev.mysql.com/downloads/connector/j/) ，Select Operating System 选择 **Platform Independent** 下载
+1. MySQL的Driver驱动包下载到MySQL官网[MySQL :: MySQL Community Downloads](https://dev.mysql.com/downloads/) - [Connector/J](https://dev.mysql.com/downloads/connector/j/) ，Select Operating System 选择 **Platform Independent** 下载，下载后解压即可
 
 ![image-20230410153934749](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101539803.png)
 
@@ -24,19 +24,21 @@ MySQL的Driver驱动包下载到MySQL官网[MySQL :: MySQL Community Downloads](
 
 ![image-20230410154139450](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101541488.png)
 
-解压后将其中的jar包添加到开发环境即可
+2. 解压后将其中的jar包添加到开发环境即可
 
-如未使用集成工具开发JDBC则要在环境变量中，将jar加到`classpath`变量里，例windows。其中，`.;`是代表当前的路径，classpath变量会让所有的class文件都执行这个变量值的内容，但不是所有的class文件都在mysql jdbc的路径下，所以，要加上`.;`让其他类文件可以正常被识别运行。
+   1. 如未使用集成工具开发JDBC则要在环境变量中，将jar加到`classpath`变量里，例windows。其中，`.;`是代表当前的路径，classpath变量会让所有的class文件都执行这个变量值的内容，但不是所有的class文件都在mysql jdbc的路径下，所以，要加上`.;`让其他类文件可以正常被识别运行。![image-20230410154724265](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101547311.png)
 
-![image-20230410154724265](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101547311.png)
+   2. 在IDEA的项目中加入驱动，在项目的模块上右键，选择`Open Module Settings`后，在选择左侧的`Libraries`，在右侧选择加入jar包，并找到解压后的驱动包即可
 
-在IDEA的项目中加入驱动，在项目的模块上右键，选择`Open Module Settings`后，在选择左侧的`Libraries`，在右侧选择加入jar包，并找到解压后的驱动包即可
+   ![image-20230410155801078](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101558127.png)
 
-![image-20230410155801078](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101558127.png)
+   
 
-![image-20230410160048165](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101600198.png)
+   ![image-20230410160048165](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101600198.png)
 
-![](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101607975.png)
+   ![](https://gitee.com/imgsbed_8/my-images/raw/master/img/202304101607975.png)
+
+
 
 
 
@@ -48,6 +50,8 @@ MySQL的Driver驱动包下载到MySQL官网[MySQL :: MySQL Community Downloads](
 
    1. 使用`DriverManager.registerDriver(Driver driver)`
    2. 使用`Class.forName(Class class)`
+
+   在mysql 8.0之前官方提供的Driver驱动内没有使用JVM给的`DriverManager.registerDriver`去注册驱动，所以要手动去调用。而8.0后的驱动内部有静态模块去调用`DriverManager.registerDriver`注册驱动，只需加载该**class**让静态代码块被执行即可
 
 2. 获取连接
 
@@ -117,7 +121,7 @@ JDBC可以通过获取`properties`配置文件中的`driver`值从而加载不�
    2. JDBC
 
       ```java
-      package com.hello.Util;
+      package Util;
       
       import java.io.FileInputStream;
       import java.sql.*;
@@ -134,7 +138,7 @@ JDBC可以通过获取`properties`配置文件中的`driver`值从而加载不�
           static{
               try {
                   Properties properties = new Properties();
-                  properties.load(new FileInputStream("src/config.properties"));
+                  properties.load(new FileInputStream("config.properties"));
       
                   URL = properties.getProperty("URL");
                   Username = properties.getProperty("Username");
@@ -142,6 +146,11 @@ JDBC可以通过获取`properties`配置文件中的`driver`值从而加载不�
                   Driver = properties.getProperty("Driver");
       
                   Class.forName(Driver);
+                  /**
+                   * java.sql.DriverManager.registerDriver(new com.mysql.jdbc.Driver)
+                   * 由于MySQL 8.0后的驱动程序内部有静态代码块去调用该方法注册驱动，所以只需加载该class文件让静态代码块被执行即可
+                   * */
+                  
                   //连接对象
                   connection = DriverManager.getConnection(URL, Username, Password);
                   System.out.println("URL:"+URL);
@@ -187,3 +196,4 @@ JDBC可以通过获取`properties`配置文件中的`driver`值从而加载不�
           }
       }
       ```
+
