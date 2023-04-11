@@ -23,6 +23,11 @@ public class JDBCConnection {
             Driver = properties.getProperty("Driver");
 
             Class.forName(Driver);
+            /**
+             * java.sql.DriverManager.registerDriver(new com.mysql.jdbc.Driver)
+             * 由于MySQL 8.0后的驱动程序内部有静态代码块去调用该方法注册驱动，所以只需加载该class文件让静态代码块被执行即可
+             * */
+
             //连接对象
             connection = DriverManager.getConnection(URL, Username, Password);
             System.out.println("URL:"+URL);
@@ -66,5 +71,4 @@ public class JDBCConnection {
             }
         }
     }
-
 }
